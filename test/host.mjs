@@ -15,6 +15,8 @@ let currentProviders = {
 			{ id: "model-a" },
 			{ id: "model-b", input: ["text", "image"] },
 			{ id: "model-c", contextWindow: 64000 },
+			{ id: "model-e", input: [] },
+			{ id: "model-f", compat: { chatTemplateKwargs: {}, supportsDeveloperRole: true } },
 		],
 	},
 };
@@ -47,7 +49,12 @@ const patched = updates[0].patch.providers.w.models;
 if (patched[0].input === undefined || patched[0].contextWindow !== 128000 || patched[0].maxTokens !== 8192) throw new Error("model-a filled: " + JSON.stringify(patched[0]));
 if (patched[1].input.length !== 2 || patched[1].contextWindow !== 128000) throw new Error("model-b keeps input, fills contextWindow");
 if (patched[2].contextWindow !== 64000 || patched[2].maxTokens !== 8192) throw new Error("model-c keeps contextWindow, fills maxTokens");
-if (!section.text().includes("filled 3")) throw new Error("section reports fill count");
+if (patched[2].compat === undefined || patched[2].compat.supportsFinishReason !== true) throw new Error("model-c compat filled");
+if (patched[3].input === undefined || patched[3].input.length !== 1 || patched[3].input[0] !== "text") throw new Error("explicit empty input normalized to text");
+if (patched[4].compat.supportsDeveloperRole !== true) throw new Error("existing compat keys preserved");
+if (patched[4].compat.chatTemplateKwargs === undefined) throw new Error("existing chatTemplateKwargs preserved");
+if (patched[4].compat.supportsFinishReason !== true) throw new Error("missing compat keys filled around existing ones");
+if (!section.text().includes("filled 5")) throw new Error("section reports fill count");
 
 // rescan on an already-complete layer is a no-op
 class FakeReq {
@@ -73,6 +80,8 @@ if (updates.length !== before) throw new Error("no redundant write");
 currentProviders.w.models.push({ id: "model-d" });
 const rescan2 = await drive("rescan", {});
 if (rescan2.value.lastFill.filled !== 1) throw new Error("model-d filled on rescan");
+const rescan3 = await drive("rescan", {});
+if (rescan3.value.lastFill.filled !== 0) throw new Error("fully declared layer: no refill");
 const latest = updates.at(-1).patch.providers.w.models.find((m) => m.id === "model-d");
 if (latest.input === undefined || latest.contextWindow !== 128000) throw new Error("model-d carries defaults");
 
