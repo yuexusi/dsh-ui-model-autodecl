@@ -1,0 +1,53 @@
+{
+  "name": "dsh-ui-model-autodecl",
+  "version": "0.1.0",
+  "description": "Auto-declare missing pi-ai model capabilities: fills input modality, context window, and output cap defaults into the user layer, and tells the model which of its capabilities are declared defaults.",
+  "type": "module",
+  "main": "./lib/index.js",
+  "engines": {
+    "dsh": ">=0.2.0-rc.2"
+  },
+  "homepage": "https://github.com/yuexusi/dsh-ui-model-autodecl#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yuexusi/dsh-ui-model-autodecl.git"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "inject": [
+        "@deepseek-ai/dsh-client-locale",
+        "@deepseek-ai/dsh-client-ui-slots"
+      ]
+    }
+  },
+  "exports": {
+    ".": {
+      "default": "./lib/index.js"
+    },
+    "./client": {
+      "default": "./lib/client.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "~4.0.4"
+  },
+  "peerDependenciesMeta": {
+    "@deepseek-ai/cordis": {
+      "optional": true
+    }
+  },
+  "keywords": [
+    "deepseek-harness",
+    "dsh",
+    "plugin",
+    "model",
+    "declaration",
+    "autodecl"
+  ],
+  "license": "MIT"
+}

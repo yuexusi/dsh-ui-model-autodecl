@@ -1,0 +1,9 @@
+# dsh-ui-model-autodecl: 模型声明自动补全（持久化组合条目）。
+- insert:
+    - id: model-autodecl
+      name: dsh-ui-model-autodecl
+      inject:
+        - webServer
+        - connection
+        - systemPrompt
+        - settings
